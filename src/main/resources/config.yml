@@ -1,0 +1,8 @@
+config:
+  module:
+    character-creation:
+      npc-name: "&2&lJoin World"
+      first-zone: "zone1"
+    economy:
+      starting-balance: 100
+      currency-symbol: $

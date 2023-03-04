@@ -1,0 +1,16 @@
+#English
+en:
+  system-prefix: "&2&lSystem &7»"
+  no-permission: "&cYou don't have permission to do that!"
+  join-message: "&7%player% &a+"
+  invalid-input: "Invalid"
+  insufficient-skill-points: "&cYou don't have enough skill points to do that!"
+  character-creation-error: " &cThere was an error creating your character."
+  loaded-character-success: " &aYour character has been loaded successfully!"
+  menu-title:
+    character-selection: "&2&lCharacter Selection"
+    character-creation: "&2&lCharacter Creation"
+  menu-items:
+    create-character: "&2&lCreate Character"
+#Swedish
+#German
