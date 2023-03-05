@@ -2,10 +2,10 @@ package net.athamus.rpg.player;
 
 import net.athamus.rpg.Main;
 import net.athamus.rpg.player.file.PlayerFileManager;
+import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 public class CharacterManager {
 
@@ -28,9 +28,14 @@ public class CharacterManager {
         rpgPlayer.setExperience(playerFileManager.getFile().getInt(path + ".xp"));
         rpgPlayer.setHealth(playerFileManager.getFile().getInt(path + ".health"));
         rpgPlayer.setMaxhealth(playerFileManager.getFile().getInt(path + ".max-health"));
-        //Deserialize Inventory
-        Inventory inventory = player.getInventory();
-        rpgPlayer.setCharacterInventory(main.getInventorySerializer().StringToInventory(playerFileManager.getFile().getString(path+".inventory")));
+        //Get Last Location
+        Location location = playerFileManager.getFile().getLocation(path+".last-location");
+        if (location != null) {
+            player.teleport(location);
+        }
+        //Inventory
+        InventoryHandler inventoryHandler = new InventoryHandler(main);
+        inventoryHandler.loadInventory(player);
         //Stats
         rpgPlayer.setConstitution(playerFileManager.getFile().getInt(path + ".stats.constitution"));
         rpgPlayer.setDefence(playerFileManager.getFile().getInt(path + ".stats.defence"));
@@ -59,31 +64,25 @@ public class CharacterManager {
         rpgPlayer.setWoodworkingExp(playerFileManager.getFile().getInt(path + ".woodworking.xp"));
         rpgPlayer.setThievingLevel(playerFileManager.getFile().getInt(path + "thieving.level"));
         rpgPlayer.setThievingExp(playerFileManager.getFile().getInt(path + ".thieving.xp"));
-        player.sendMessage(main.formatString(main.getLangManager().getFile().getString("en.system-prefix") + " &aCharacter " + (characterSlot + 1) + " has been created."));
-        saveCharacter(player);
+        player.sendMessage(main.formatString(main.getLangManager().getFile().getString("en.system-prefix") + " &aCharacter " + (characterSlot) + " has been created."));
 
 
         //Setting Player's Data
-        if (rpgPlayer.getCharacterInventory().getContents().length > 0) {
-            player.getInventory().setContents(rpgPlayer.getCharacterInventory().getContents());
-        }
         player.setHealth(rpgPlayer.getHealth());
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(rpgPlayer.getMaxhealth());
         player.setLevel(rpgPlayer.getCombatLevel());
         player.setExp(rpgPlayer.getExperience());
     }
 
-    public void unloadCharacter(Player player){
-        saveCharacter(player);
+    public void unloadCharacter(Player player, int slot){
+        saveCharacter(player, slot);
         PlayerFileManager playerFileManager = new PlayerFileManager(main, player);
-        player.getInventory().clear();
         player.setLevel(0);
         player.setExp(0);
         player.setHealth(10);
         player.setFoodLevel(20);
-        player.sendMessage(main.formatString(main.getLangManager().getFile().getString("en.system-prefix") + " &cCharacter " + (main.getActiveCharacterMap().get(player).getCharacterSlot() + 1) + " has been unloaded."));
+        player.sendMessage(main.formatString(main.getLangManager().getFile().getString("en.system-prefix") + " &cCharacter " + (main.getActiveCharacterMap().get(player).getCharacterSlot()) + " has been unloaded."));
         main.getActiveCharacterMap().remove(player);
-        playerFileManager.saveFile();
     }
 
     public void resetCharacter(Player player, int characterSlot){
@@ -92,17 +91,19 @@ public class CharacterManager {
         playerFileManager.saveFile();
     }
 
-    public void saveCharacter(Player player) {
+    public void saveCharacter(Player player, int slot) {
         RPGPlayer rpgPlayer = main.getActiveCharacterMap().get(player);
         if (rpgPlayer != null) {
             PlayerFileManager playerFileManager = new PlayerFileManager(main, player);
-            String path = "Characters." + rpgPlayer.getCharacterSlot();
+            String path = "Characters." + slot;
             FileConfiguration playerFile = playerFileManager.getFile();
             playerFile.set(path + ".name", rpgPlayer.getCharacterName());
             playerFile.set(path + ".combatLevel", rpgPlayer.getCombatLevel());
             playerFile.set(path + ".xp", rpgPlayer.getExperience());
             playerFile.set(path + ".class", rpgPlayer.getCharacterClass());
-            playerFile.set(path + ".inventory", main.getInventorySerializer().InventoryToString(player.getInventory()));
+            //Inventory
+            InventoryHandler inventoryHandler = new InventoryHandler(main);
+            inventoryHandler.saveInventory(player.getInventory(),player,slot);
             playerFile.set(path + ".cooking.level", rpgPlayer.getCookingLevel());
             playerFile.set(path + ".cooking.xp", rpgPlayer.getCookingExp());
             playerFile.set(path + ".farming.level", rpgPlayer.getFarmingLevel());
@@ -119,7 +120,7 @@ public class CharacterManager {
             playerFile.set(path + ".woodworking.xp", rpgPlayer.getWoodworkingExp());
             playerFile.set(path + ".thieving.level", rpgPlayer.getThievingLevel());
             playerFile.set(path + ".thieving.xp", rpgPlayer.getThievingExp());
-            playerFile.set(path + ".last-location", player.getLocation().serialize());
+            playerFile.set(path + ".last-location", player.getLocation());
             playerFile.set(path + ".stats.constitution", rpgPlayer.getConstitution());
             playerFile.set(path + ".stats.defence", rpgPlayer.getDefence());
             playerFile.set(path + ".stats.dexterity", rpgPlayer.getDexterity());
@@ -142,17 +143,6 @@ public class CharacterManager {
         return false;
     }
 
-    public void loadInventory(Player player){
-        player.getInventory().setContents(getRPGPlayer(player).getCharacterInventory().getContents());
-    }
-
-    public void saveInventory(Player player){
-        PlayerFileManager playerFileManager = new PlayerFileManager(main, player);
-        String path = "Characters." + main.getActiveCharacterMap().get(player).getCharacterSlot();
-        RPGPlayer rpgPlayer = main.getActiveCharacterMap().get(player);
-        rpgPlayer.setCharacterInventory(player.getInventory());
-        playerFileManager.saveFile();
-    }
 
 
 

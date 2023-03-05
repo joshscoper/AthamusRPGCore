@@ -1,5 +1,7 @@
 package net.athamus.rpg.player.file;
 
+import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import net.athamus.rpg.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,7 +10,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -44,7 +45,7 @@ public class PlayerFileManager {
 
     //Create File
     public void createFile() {
-        for (int i = 0; i <= 8; i++) {
+        for (int i = 1; i <= 9; i++) {
             config.set("Characters." + Integer.valueOf(i) + ".name", "Create Character");
             config.set("Characters." + Integer.valueOf(i) + ".class", "None");
             config.set("Characters." + Integer.valueOf(i) + ".combatLevel", 1);
@@ -54,9 +55,10 @@ public class PlayerFileManager {
             config.set("Characters." + Integer.valueOf(i) + ".max-health", 20);
             config.set("Characters." + Integer.valueOf(i) + ".mana", 10);
             config.set("Characters." + Integer.valueOf(i) + ".max-mana", 10);
-            Inventory inventory = player.getInventory();
-            inventory.addItem(new ItemStack(Material.AIR));
-            config.set("Characters." + Integer.valueOf(i) + ".inventory", main.getInventorySerializer().InventoryToString(inventory));
+            ItemStack[] defaultContents = {new ItemStack(Material.BOOK)};
+            ReadWriteNBT contents = NBT.itemStackArrayToNBT(defaultContents);
+            String str = contents.toString();
+            config.set("Characters." + Integer.valueOf(i) + ".inventory", str);
             config.set("Characters." + Integer.valueOf(i) + ".stats.constitution",1);
             config.set("Characters." + Integer.valueOf(i) + ".stats.defence",1);
             config.set("Characters." + Integer.valueOf(i) + ".stats.dexterity",1);
@@ -101,9 +103,10 @@ public class PlayerFileManager {
         config.set("Characters." + Integer.valueOf(i) + ".max-health", 20);
         config.set("Characters." + Integer.valueOf(i) + ".mana", 10);
         config.set("Characters." + Integer.valueOf(i) + ".max-mana", 10);
-        Inventory inventory = player.getInventory();
-        inventory.addItem(new ItemStack(Material.AIR));
-        config.set("Characters." + Integer.valueOf(i) + ".inventory", main.getInventorySerializer().InventoryToString(inventory));
+        ItemStack[] defaultContents = {new ItemStack(Material.BOOK)};
+        ReadWriteNBT contents = NBT.itemStackArrayToNBT(defaultContents);
+        String str = contents.toString();
+        config.set("Characters." + Integer.valueOf(i) + ".inventory", str);
         config.set("Characters." + Integer.valueOf(i) + ".stats.constitution",1);
         config.set("Characters." + Integer.valueOf(i) + ".stats.defence",1);
         config.set("Characters." + Integer.valueOf(i) + ".stats.dexterity",1);

@@ -2,6 +2,8 @@ package net.athamus.rpg.events;
 
 import net.athamus.rpg.Main;
 import net.athamus.rpg.menu.menus.CharacterSelectionMenu;
+import net.athamus.rpg.player.CharacterManager;
+import net.athamus.rpg.player.InventoryHandler;
 import net.athamus.rpg.player.file.PlayerFileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -10,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
 public class PlayerEvents implements Listener {
@@ -45,6 +48,16 @@ public class PlayerEvents implements Listener {
         //Character Select & Creation
         if (clicked.getName().equals(main.formatString(main.getConfig().getString("config.module.character-creation.npc-name")))){
             main.getMenuManager().getPlayerSession(player).newMenu(new CharacterSelectionMenu(main, 9, main.formatString(main.getLangManager().getFile().getString("en.menu-title.character-selection")), player));
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event){
+        if (main.getActiveCharacterMap().containsKey(event.getPlayer())){
+           // CharacterManager manager = new CharacterManager(main);
+           // manager.unloadCharacter(event.getPlayer(), main.getActiveCharacterMap().get(event.getPlayer()).getCharacterSlot());
+            InventoryHandler inventoryHandler = new InventoryHandler(main);
+            inventoryHandler.saveInventory(event.getPlayer().getInventory(),event.getPlayer(),main.getActiveCharacterMap().get(event.getPlayer()).getCharacterSlot());
         }
     }
 

@@ -8,11 +8,11 @@ import net.athamus.rpg.classes.types.warrior.Warrior;
 
 public enum CharacterClass {
 
-    WARRIOR(7, 17, Warrior.class),
-    MAGE(5, 15, Mage.class),
-    ROGUE(3, 13, Rogue.class),
-    HUNTER(4, 14, Hunter.class),
-    PALADIN(6, 16, Paladin.class);
+    WARRIOR(7, 7, Warrior.class),
+    MAGE(5, 5, Mage.class),
+    ROGUE(3, 3, Rogue.class),
+    HUNTER(4, 4, Hunter.class),
+    PALADIN(6, 6, Paladin.class);
 
     private int modelData;
     private int greyData;

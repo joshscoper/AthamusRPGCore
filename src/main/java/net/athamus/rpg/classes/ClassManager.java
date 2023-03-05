@@ -2,6 +2,7 @@ package net.athamus.rpg.classes;
 
 import net.athamus.rpg.Main;
 import net.athamus.rpg.player.CharacterManager;
+import net.athamus.rpg.player.InventoryHandler;
 import net.athamus.rpg.player.RPGPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -47,7 +48,8 @@ public class ClassManager implements Listener {
     @EventHandler
     public void onSwap(PlayerSwapHandItemsEvent e){
         Player p = e.getPlayer();
-        if (main.getCharacterManager().hasActivePlayer(p)) {
+        CharacterManager characterManager = new CharacterManager(main);
+        if (characterManager.hasActivePlayer(p)) {
             e.setCancelled(true);
             toggleCombatInventory(p);
         }
@@ -56,11 +58,13 @@ public class ClassManager implements Listener {
     public void toggleCombatInventory(Player p){
         if (combatMenu.contains(p)){
             combatMenu.remove(p);
-            main.getCharacterManager().loadInventory(p);
+            InventoryHandler inventoryHandler = new InventoryHandler(main);
+            inventoryHandler.loadInventory(p);
         } else {
             combatMenu.add(p);
             RPGPlayer character = main.getActiveCharacterMap().get(p);
-            main.getCharacterManager().saveInventory(p);
+            InventoryHandler inventoryHandler = new InventoryHandler(main);
+            inventoryHandler.saveInventory(p.getInventory(),p, main.getActiveCharacterMap().get(p).getCharacterSlot());
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
                 @Override
                 public void run() {

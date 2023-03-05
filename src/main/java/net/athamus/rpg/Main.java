@@ -4,10 +4,12 @@ import net.athamus.rpg.classes.ClassManager;
 import net.athamus.rpg.events.PlayerEvents;
 import net.athamus.rpg.menu.MenuManager;
 import net.athamus.rpg.player.CharacterManager;
+import net.athamus.rpg.player.InventoryHandler;
 import net.athamus.rpg.player.RPGPlayer;
 import net.athamus.rpg.player.character.CharacterCreator;
 import net.athamus.rpg.player.character.CharacterCreatorManager;
 import net.athamus.rpg.util.*;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,8 +22,6 @@ public final class Main extends JavaPlugin {
     private FileManager configManager;
     private FileManager langManager;
 
-    //Character Manager
-    private CharacterManager characterManager;
 
     //Serializers
     private ItemSerializer itemSerializer;
@@ -59,8 +59,6 @@ public final class Main extends JavaPlugin {
 
         configManager.setupFile();
         langManager.setupFile();
-
-        characterManager = new CharacterManager(this);
         characterCreatorManager = new CharacterCreatorManager(this);
 
         skullUtil = new SkullUtil();
@@ -89,6 +87,8 @@ public final class Main extends JavaPlugin {
         menuManager = new MenuManager(this);
     }
 
+
+
     public void registerCommands(){}
 
     public String formatString(String input){return ChatColor.translateAlternateColorCodes('&', input);
@@ -106,10 +106,6 @@ public final class Main extends JavaPlugin {
 
     public InventorySerializer getInventorySerializer() {
         return inventorySerializer;
-    }
-
-    public CharacterManager getCharacterManager() {
-        return characterManager;
     }
 
     public MenuManager getMenuManager() {
